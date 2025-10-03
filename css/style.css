@@ -605,3 +605,48 @@ p {
     padding-top: 6rem;
   }
 }
+
+
+/* Ajustes visuais para alinhar os cards da seção Nosso Sabor */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02); /* leve contraste para destacar */
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.25);
+}
+
+.feature-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 1rem;
+}
+
+.feature-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary-gold);
+}
+
+.feature-text {
+    color: var(--text-gray);
+    line-height: 1.6;
+    font-size: 1rem;
+}
