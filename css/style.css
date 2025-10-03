@@ -536,3 +536,26 @@ p {
         padding: 1.5rem;
     }
 }
+/* ===== FIX: sobreposição hero vs próxima seção ===== */
+.hero-section{
+  min-height:100vh;
+  padding-bottom:6rem;
+}
+
+.hero-overlay{ z-index:0; }
+.hero-content{ position:relative; z-index:1; }
+.section{ position:relative; z-index:2; background:#000; }
+#nosso-sabor{ padding-top:8rem; }
+
+.hero-section::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-1px;
+  height:48px;
+  background:linear-gradient(to bottom, rgba(0,0,0,.6), #000);
+  z-index:1;
+  pointer-events:none;
+}
+
+@media (max-width:768px){
+  #nosso-sabor{ padding-top:6rem; }
