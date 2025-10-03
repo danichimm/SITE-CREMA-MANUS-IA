@@ -706,6 +706,37 @@ p {
     }
 
     .feature-item {
+
+
+
+
+        /* ===== Forçar grid 2x2 no desktop e 1x4 no mobile ===== */
+@media (min-width: 769px) {
+    .features-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* sempre 2 colunas */
+        grid-auto-rows: 1fr; /* mantém altura uniforme */
+        gap: 3rem 4rem;
+        justify-items: center;
+        align-items: stretch;
+    }
+
+    .feature-item {
+        min-height: 260px;
+    }
+}
+
+@media (max-width: 768px) {
+    .features-grid {
+        grid-template-columns: 1fr !important; /* mobile = 1 coluna */
+        gap: 2rem;
+    }
+
+    .feature-item {
+        min-height: auto;
+    }
+}
+
         min-height: auto; /* libera altura no mobile */
     }
 }
