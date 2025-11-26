@@ -68,6 +68,8 @@ p {
 .section {
     padding: 6rem 0;
     position: relative;
+    background: #000; /* garante contraste e não deixa "invadir" hero */
+    z-index: 2;
 }
 
 .section-title {
@@ -115,12 +117,13 @@ p {
 
 /* Seção Hero */
 .hero-section {
-    height: 100vh;
+    min-height: 100vh; /* antes era height: 100vh */
     background: url('../assets/images/gelato_1.jpeg') center/cover no-repeat;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-bottom: 4rem; /* respiro para evitar sobreposição */
 }
 
 .hero-overlay {
@@ -533,4 +536,207 @@ p {
         padding: 1.5rem;
     }
 }
+/* ===== FIX: sobreposição hero vs próxima seção ===== */
+.hero-section{
+  min-height:100vh;
+  padding-bottom:6rem;
+}
 
+.hero-overlay{ z-index:0; }
+.hero-content{ position:relative; z-index:1; }
+.section{ position:relative; z-index:2; background:#000; }
+#nosso-sabor{ padding-top:8rem; }
+
+.hero-section::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-1px;
+  height:48px;
+  background:linear-gradient(to bottom, rgba(0,0,0,.6), #000);
+  z-index:1;
+  pointer-events:none;
+}
+
+@media (max-width:768px){
+  #nosso-sabor{ padding-top:6rem; }
+/* ===== FIX FINAL: Hero + Seções ===== */
+.hero-section {
+  min-height: 100vh;          /* ocupa a tela inteira */
+  padding-bottom: 6rem;       /* respiro no fundo */
+  position: relative;
+  z-index: 0;                 /* hero fica abaixo das outras seções */
+}
+
+.hero-overlay {
+  z-index: 0;                 /* overlay atrás de tudo */
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;                 /* texto/CTA da hero acima do overlay */
+}
+
+.section {
+  position: relative;
+  z-index: 2;                 /* todas as seções acima da hero */
+  background: #000;           /* fundo sólido para não vazar imagem */
+}
+
+#nosso-sabor {
+  padding-top: 8rem;          /* afasta do botão da hero */
+}
+
+/* Linha de transição suave entre hero e seção seguinte */
+.hero-section::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7), #000);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Mobile: reduz folga */
+@media (max-width: 768px) {
+  #nosso-sabor {
+    padding-top: 6rem;
+  }
+}
+
+
+/* Ajustes visuais para alinhar os cards da seção Nosso Sabor */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02); /* leve contraste para destacar */
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.25);
+}
+
+.feature-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 1rem;
+}
+
+.feature-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary-gold);
+}
+
+.feature-text {
+    color: var(--text-gray);
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+
+/* ===== Ajuste grid de features (Nosso Sabor) ===== */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas fixas no desktop */
+    gap: 3rem 4rem; /* espaço entre os cards */
+    justify-items: center;
+    align-items: stretch;
+    margin-top: 4rem;
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    min-height: 260px; /* altura uniforme */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.25);
+}
+
+.feature-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 1rem;
+}
+
+.feature-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary-gold);
+}
+
+.feature-text {
+    color: var(--text-gray);
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 768px) {
+    .features-grid {
+        grid-template-columns: 1fr; /* 1 coluna no mobile */
+        gap: 2rem;
+    }
+
+    .feature-item {
+
+
+
+
+        /* ===== Forçar grid 2x2 no desktop e 1x4 no mobile ===== */
+@media (min-width: 769px) {
+    .features-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* sempre 2 colunas */
+        grid-auto-rows: 1fr; /* mantém altura uniforme */
+        gap: 3rem 4rem;
+        justify-items: center;
+        align-items: stretch;
+    }
+
+    .feature-item {
+        min-height: 260px;
+    }
+}
+
+@media (max-width: 768px) {
+    .features-grid {
+        grid-template-columns: 1fr !important; /* mobile = 1 coluna */
+        gap: 2rem;
+    }
+
+    .feature-item {
+        min-height: auto;
+    }
+}
+
+        min-height: auto; /* libera altura no mobile */
+    }
+}
