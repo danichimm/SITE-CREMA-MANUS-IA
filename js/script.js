@@ -30,64 +30,14 @@ const observer = new IntersectionObserver((entries) => {
 document.addEventListener('DOMContentLoaded', () => {
     const elementsToAnimate = document.querySelectorAll('.section-title, .feature-item, .store-card, .event-item, .review-card, .contact-card');
     elementsToAnimate.forEach(el => observer.observe(el));
-});
-
-// Efeito parallax sutil no hero
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const hero = document.querySelector('.hero-section');
-    if (hero) {
-        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-    }
-});
-
-// Preloader simples
-window.addEventListener('load', () => {
-    document.body.classList.add('loaded');
-});
-
-// Otimização de performance para scroll
-let ticking = false;
-
-function updateScrollEffects() {
-    // Efeitos de scroll aqui
-    ticking = false;
-}
-
-window.addEventListener('scroll', () => {
-    if (!ticking) {
-        requestAnimationFrame(updateScrollEffects);
-        ticking = true;
-    }
-});
-
-// Lazy loading para imagens
-if ('IntersectionObserver' in window) {
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.remove('lazy');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-
-    document.querySelectorAll('img[data-src]').forEach(img => {
-        imageObserver.observe(img);
-    });
-}
-
-// ========================================
-// RASTREAMENTO DE EVENTOS - CREMA DI LATTE
-// ========================================
-// Este código rastreia os cliques nos botões "Como Chegar"
-// e envia os dados para o Google Analytics 4
-
-// Rastrear cliques no botão "Como Chegar"
-document.addEventListener('DOMContentLoaded', function() {
-    // Selecionar todos os botões "Como Chegar"
+    
+    // ========================================
+    // RASTREAMENTO DE EVENTOS - CREMA DI LATTE
+    // ========================================
+    // Este código rastreia os cliques nos botões "Como Chegar"
+    // e envia os dados para o Google Analytics 4
+    
+    // Rastrear cliques no botão "Como Chegar"
     const storeButtons = document.querySelectorAll('.store-button');
     
     storeButtons.forEach(button => {
@@ -153,6 +103,53 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Efeito parallax sutil no hero
+window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    const hero = document.querySelector('.hero-section');
+    if (hero) {
+        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+    }
+});
+
+// Preloader simples
+window.addEventListener('load', () => {
+    document.body.classList.add('loaded');
+});
+
+// Otimização de performance para scroll
+let ticking = false;
+
+function updateScrollEffects() {
+    // Efeitos de scroll aqui
+    ticking = false;
+}
+
+window.addEventListener('scroll', () => {
+    if (!ticking) {
+        requestAnimationFrame(updateScrollEffects);
+        ticking = true;
+    }
+});
+
+// Lazy loading para imagens
+if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                imageObserver.unobserve(img);
+            }
+        });
+    });
+
+    document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+    });
+}
 
 // ========================================
 // RASTREAMENTO DE SCROLL
