@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // ========================================
     // RASTREAMENTO DE EVENTOS - CREMA DI LATTE
-    // PADRÃO ROBUSTO COM DEFENSIVE PROGRAMMING
+    // GOOGLE ANALYTICS + TIKTOK PIXEL
     // ========================================
     
     // ========================================
@@ -45,14 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
 
-            // Verificar se gtag está disponível
-            if (typeof gtag === 'undefined') {
-                window.location.href = this.href;
-                return;
-            }
-
             const url = this.href;
-            // Validar se URL existe
             if (!url) return;
 
             const storeCard = this.closest('.store-card');
@@ -60,17 +53,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? storeCard.querySelector('.store-title')?.textContent?.trim()
                 : 'Loja Desconhecida';
 
-            // Enviar evento com transport: 'beacon' (envia em background)
-            gtag('event', 'clique_como_chegar', {
-                event_category: 'engajamento',
-                event_label: storeName,
-                value: 1,
-                transport: 'beacon'
-            });
+            // Google Analytics
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'clique_como_chegar', {
+                    event_category: 'engajamento',
+                    event_label: storeName,
+                    value: 1,
+                    transport: 'beacon'
+                });
+            }
 
-            console.log('✅ Evento rastreado (beacon): Clique em Como Chegar - ' + storeName);
+            // TikTok Pixel
+            if (typeof ttq !== 'undefined') {
+                ttq.track('ClickButton', {
+                    content_name: 'Como Chegar',
+                    content_category: storeName
+                });
+            }
 
-            // Redireciona imediatamente (beacon envia em background)
+            console.log('✅ Evento rastreado: Clique em Como Chegar - ' + storeName);
+
+            // Redireciona imediatamente
             window.location.href = url;
         });
     });
@@ -81,12 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const contactButtons = document.querySelectorAll('.contact-button, .events-button, .whatsapp-float a');
     
     contactButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            // Verificar se gtag está disponível
-            if (typeof gtag === 'undefined') {
-                return;
-            }
-
+        button.addEventListener('click', function() {
             const buttonText = this.textContent.trim();
             let eventLabel = 'Contato Desconhecido';
             
@@ -100,14 +98,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 eventLabel = 'Levar para Evento';
             }
             
-            gtag('event', 'clique_contato', {
-                event_category: 'engajamento',
-                event_label: eventLabel,
-                value: 1,
-                transport: 'beacon'
-            });
+            // Google Analytics
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'clique_contato', {
+                    event_category: 'engajamento',
+                    event_label: eventLabel,
+                    value: 1,
+                    transport: 'beacon'
+                });
+            }
+
+            // TikTok Pixel
+            if (typeof ttq !== 'undefined') {
+                ttq.track('Contact', {
+                    content_name: eventLabel
+                });
+            }
             
-            console.log('✅ Evento rastreado (beacon): Clique em ' + eventLabel);
+            console.log('✅ Evento rastreado: Clique em ' + eventLabel);
         });
     });
     
@@ -116,20 +124,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========================================
     const heroButton = document.querySelector('.hero-button');
     if (heroButton) {
-        heroButton.addEventListener('click', function(e) {
-            // Verificar se gtag está disponível
-            if (typeof gtag === 'undefined') {
-                return;
+        heroButton.addEventListener('click', function() {
+            // Google Analytics
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'clique_nossas_lojas', {
+                    event_category: 'navegacao',
+                    event_label: 'Hero Section',
+                    value: 1,
+                    transport: 'beacon'
+                });
             }
 
-            gtag('event', 'clique_nossas_lojas', {
-                event_category: 'navegacao',
-                event_label: 'Hero Section',
-                value: 1,
-                transport: 'beacon'
-            });
+            // TikTok Pixel
+            if (typeof ttq !== 'undefined') {
+                ttq.track('ViewContent', {
+                    content_name: 'Nossas Lojas'
+                });
+            }
             
-            console.log('✅ Evento rastreado (beacon): Clique em Nossas Lojas');
+            console.log('✅ Evento rastreado: Clique em Nossas Lojas');
         });
     }
 
@@ -145,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const rect = lojasSection.getBoundingClientRect();
                 // Se a seção de lojas entrou na viewport
                 if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    // Verificar se gtag está disponível
+                    // Google Analytics
                     if (typeof gtag !== 'undefined') {
                         gtag('event', 'visualizacao_lojas', {
                             event_category: 'engajamento',
@@ -153,9 +166,16 @@ document.addEventListener('DOMContentLoaded', () => {
                             value: 1,
                             transport: 'beacon'
                         });
-                        
-                        console.log('✅ Evento rastreado (beacon): Visualização da Seção Nossas Lojas');
                     }
+
+                    // TikTok Pixel
+                    if (typeof ttq !== 'undefined') {
+                        ttq.track('ViewContent', {
+                            content_name: 'Seção Nossas Lojas'
+                        });
+                    }
+                    
+                    console.log('✅ Evento rastreado: Visualização da Seção Nossas Lojas');
                     scrollEventFired = true; // Dispara apenas uma vez
                 }
             }
