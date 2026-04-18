@@ -33,45 +33,44 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // ========================================
     // RASTREAMENTO DE EVENTOS - CREMA DI LATTE
-    // PADRÃO OTIMIZADO COM BEACON (MELHOR SOLUÇÃO)
+    // PADRÃO ROBUSTO COM DEFENSIVE PROGRAMMING
     // ========================================
-    
-    // Verificar se gtag está disponível
-    if (typeof gtag === 'undefined') {
-        console.warn('⚠️ Google Analytics (gtag) não está carregado. Rastreamento desativado.');
-        return;
-    }
     
     // ========================================
     // 1. RASTREAR CLIQUES EM "COMO CHEGAR"
     // ========================================
     const storeButtons = document.querySelectorAll('.store-button');
     
-    if (storeButtons.length === 0) {
-        console.warn('⚠️ Nenhum botão com classe .store-button encontrado');
-    }
-    
     storeButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            
+
+            // Verificar se gtag está disponível
+            if (typeof gtag === 'undefined') {
+                window.location.href = this.href;
+                return;
+            }
+
             const url = this.href;
+            // Validar se URL existe
+            if (!url) return;
+
             const storeCard = this.closest('.store-card');
             const storeName = storeCard
                 ? storeCard.querySelector('.store-title')?.textContent?.trim()
                 : 'Loja Desconhecida';
-            
-            // Enviar evento com transport: 'beacon' (MELHOR SOLUÇÃO)
+
+            // Enviar evento com transport: 'beacon' (envia em background)
             gtag('event', 'clique_como_chegar', {
                 event_category: 'engajamento',
                 event_label: storeName,
                 value: 1,
-                transport: 'beacon'  // ← Envia em background, não bloqueia navegação
+                transport: 'beacon'
             });
-            
+
             console.log('✅ Evento rastreado (beacon): Clique em Como Chegar - ' + storeName);
-            
-            // Redireciona IMEDIATAMENTE (beacon envia em background)
+
+            // Redireciona imediatamente (beacon envia em background)
             window.location.href = url;
         });
     });
@@ -83,6 +82,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     contactButtons.forEach(button => {
         button.addEventListener('click', function(e) {
+            // Verificar se gtag está disponível
+            if (typeof gtag === 'undefined') {
+                return;
+            }
+
             const buttonText = this.textContent.trim();
             let eventLabel = 'Contato Desconhecido';
             
@@ -113,6 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroButton = document.querySelector('.hero-button');
     if (heroButton) {
         heroButton.addEventListener('click', function(e) {
+            // Verificar se gtag está disponível
+            if (typeof gtag === 'undefined') {
+                return;
+            }
+
             gtag('event', 'clique_nossas_lojas', {
                 event_category: 'navegacao',
                 event_label: 'Hero Section',
@@ -123,6 +132,35 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('✅ Evento rastreado (beacon): Clique em Nossas Lojas');
         });
     }
+
+    // ========================================
+    // 4. RASTREAMENTO DE SCROLL - VISUALIZAÇÃO DE LOJAS
+    // ========================================
+    let scrollEventFired = false;
+
+    window.addEventListener('scroll', function() {
+        if (!scrollEventFired) {
+            const lojasSection = document.getElementById('lojas');
+            if (lojasSection) {
+                const rect = lojasSection.getBoundingClientRect();
+                // Se a seção de lojas entrou na viewport
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    // Verificar se gtag está disponível
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'visualizacao_lojas', {
+                            event_category: 'engajamento',
+                            event_label: 'Seção Nossas Lojas',
+                            value: 1,
+                            transport: 'beacon'
+                        });
+                        
+                        console.log('✅ Evento rastreado (beacon): Visualização da Seção Nossas Lojas');
+                    }
+                    scrollEventFired = true; // Dispara apenas uma vez
+                }
+            }
+        }
+    });
 });
 
 // Efeito parallax sutil no hero
@@ -171,29 +209,3 @@ if ('IntersectionObserver' in window) {
         imageObserver.observe(img);
     });
 }
-
-// ========================================
-// 4. RASTREAMENTO DE SCROLL - VISUALIZAÇÃO DE LOJAS
-// ========================================
-let scrollEventFired = false;
-
-window.addEventListener('scroll', function() {
-    if (!scrollEventFired) {
-        const lojasSection = document.getElementById('lojas');
-        if (lojasSection) {
-            const rect = lojasSection.getBoundingClientRect();
-            // Se a seção de lojas entrou na viewport
-            if (rect.top < window.innerHeight && rect.bottom > 0) {
-                gtag('event', 'visualizacao_lojas', {
-                    event_category: 'engajamento',
-                    event_label: 'Seção Nossas Lojas',
-                    value: 1,
-                    transport: 'beacon'
-                });
-                
-                console.log('✅ Evento rastreado (beacon): Visualização da Seção Nossas Lojas');
-                scrollEventFired = true; // Dispara apenas uma vez
-            }
-        }
-    }
-});
