@@ -33,37 +33,56 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // ========================================
     // RASTREAMENTO DE EVENTOS - CREMA DI LATTE
+    // PADRÃO OTIMIZADO COM BEACON (MELHOR SOLUÇÃO)
     // ========================================
-    // Este código rastreia os cliques nos botões "Como Chegar"
-    // e envia os dados para o Google Analytics 4
     
-    // Rastrear cliques no botão "Como Chegar"
+    // Verificar se gtag está disponível
+    if (typeof gtag === 'undefined') {
+        console.warn('⚠️ Google Analytics (gtag) não está carregado. Rastreamento desativado.');
+        return;
+    }
+    
+    // ========================================
+    // 1. RASTREAR CLIQUES EM "COMO CHEGAR"
+    // ========================================
     const storeButtons = document.querySelectorAll('.store-button');
+    
+    if (storeButtons.length === 0) {
+        console.warn('⚠️ Nenhum botão com classe .store-button encontrado');
+    }
     
     storeButtons.forEach(button => {
         button.addEventListener('click', function(e) {
-            // Pegar o nome da loja (está no elemento irmão .store-title)
-            const storeCard = this.closest('.store-card');
-            const storeName = storeCard ? storeCard.querySelector('.store-title').textContent : 'Loja Desconhecida';
+            e.preventDefault();
             
-            // Enviar evento para o Google Analytics 4
+            const url = this.href;
+            const storeCard = this.closest('.store-card');
+            const storeName = storeCard
+                ? storeCard.querySelector('.store-title')?.textContent?.trim()
+                : 'Loja Desconhecida';
+            
+            // Enviar evento com transport: 'beacon' (MELHOR SOLUÇÃO)
             gtag('event', 'clique_como_chegar', {
-                'event_category': 'engajamento',
-                'event_label': storeName,
-                'value': 1
+                event_category: 'engajamento',
+                event_label: storeName,
+                value: 1,
+                transport: 'beacon'  // ← Envia em background, não bloqueia navegação
             });
             
-            // Log no console (para você testar)
-            console.log('✅ Evento rastreado: Clique em Como Chegar - ' + storeName);
+            console.log('✅ Evento rastreado (beacon): Clique em Como Chegar - ' + storeName);
+            
+            // Redireciona IMEDIATAMENTE (beacon envia em background)
+            window.location.href = url;
         });
     });
     
-    // Rastrear cliques nos botões de contato (WhatsApp, Instagram, TikTok)
+    // ========================================
+    // 2. RASTREAR CLIQUES EM CONTATO (WhatsApp, Instagram, TikTok)
+    // ========================================
     const contactButtons = document.querySelectorAll('.contact-button, .events-button, .whatsapp-float a');
     
     contactButtons.forEach(button => {
         button.addEventListener('click', function(e) {
-            // Pegar o texto do botão para identificar qual foi clicado
             const buttonText = this.textContent.trim();
             let eventLabel = 'Contato Desconhecido';
             
@@ -77,29 +96,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 eventLabel = 'Levar para Evento';
             }
             
-            // Enviar evento para o Google Analytics 4
             gtag('event', 'clique_contato', {
-                'event_category': 'engajamento',
-                'event_label': eventLabel,
-                'value': 1
+                event_category: 'engajamento',
+                event_label: eventLabel,
+                value: 1,
+                transport: 'beacon'
             });
             
-            // Log no console
-            console.log('✅ Evento rastreado: Clique em ' + eventLabel);
+            console.log('✅ Evento rastreado (beacon): Clique em ' + eventLabel);
         });
     });
     
-    // Rastrear cliques no botão "Nossas Lojas" (hero section)
+    // ========================================
+    // 3. RASTREAR CLIQUES NO BOTÃO "NOSSAS LOJAS" (HERO SECTION)
+    // ========================================
     const heroButton = document.querySelector('.hero-button');
     if (heroButton) {
         heroButton.addEventListener('click', function(e) {
             gtag('event', 'clique_nossas_lojas', {
-                'event_category': 'navegacao',
-                'event_label': 'Hero Section',
-                'value': 1
+                event_category: 'navegacao',
+                event_label: 'Hero Section',
+                value: 1,
+                transport: 'beacon'
             });
             
-            console.log('✅ Evento rastreado: Clique em Nossas Lojas');
+            console.log('✅ Evento rastreado (beacon): Clique em Nossas Lojas');
         });
     }
 });
@@ -152,10 +173,8 @@ if ('IntersectionObserver' in window) {
 }
 
 // ========================================
-// RASTREAMENTO DE SCROLL
+// 4. RASTREAMENTO DE SCROLL - VISUALIZAÇÃO DE LOJAS
 // ========================================
-// Rastrear quando o usuário chega na seção de lojas
-
 let scrollEventFired = false;
 
 window.addEventListener('scroll', function() {
@@ -166,12 +185,13 @@ window.addEventListener('scroll', function() {
             // Se a seção de lojas entrou na viewport
             if (rect.top < window.innerHeight && rect.bottom > 0) {
                 gtag('event', 'visualizacao_lojas', {
-                    'event_category': 'engajamento',
-                    'event_label': 'Seção Nossas Lojas',
-                    'value': 1
+                    event_category: 'engajamento',
+                    event_label: 'Seção Nossas Lojas',
+                    value: 1,
+                    transport: 'beacon'
                 });
                 
-                console.log('✅ Evento rastreado: Visualização da Seção Nossas Lojas');
+                console.log('✅ Evento rastreado (beacon): Visualização da Seção Nossas Lojas');
                 scrollEventFired = true; // Dispara apenas uma vez
             }
         }
